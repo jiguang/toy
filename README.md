@@ -1,4 +1,4 @@
-lab
+Toy
 ===
 
 Some Toys
