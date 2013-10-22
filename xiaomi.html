@@ -238,9 +238,10 @@
         m.init();
     })();
 
-    // JSON 回调函数，据说 "allow": false 是没有购买权限？
+    // JSON 回调函数，据说 "allow": false 是没有购买权限
     // 例子：hdcontrol({"stime":1382433176,"status":{"allow":false,"miphone":{"hdstart":false,"hdstop":true,"hdurl":"","duration":null, "pmstart":false},"mibox":{"hdstart":false,"hdstop":true,"hdurl":"","duration":null, "pmstart":false},"mitv":{"hdstart":false,"hdstop":true,"hdurl":"","duration":null, "pmstart":false}}})
     function hdcontrol(e) {
+
         var t = e.status,
                 n = t.miphone.hdurl,
                 i = t.mibox.hdurl,
@@ -272,7 +273,7 @@
             }
         }
 
-        // 抢购之前忽悠你的状态
+        // 抢购之前的状态
         function h(e) {
             m.cookie('xm_xt_prex', e, {
                 path: '/',
@@ -283,7 +284,7 @@
 
         if (isRollStatus) {
 
-            // 如果返回的 allow 是 true ...
+            // 如果返回的 allow 是 true
             if (t.allow) {
                 if (isPhone === true) {
                     isPhone = false;
@@ -310,6 +311,7 @@
             miphoneBuy.box(false);
         }
 
+        // 判断服务器返回的开始结束时间，显示对应状态信息
         if (l && o && r) {
             h(4);
             miphoneBuy.saleOut();
@@ -337,6 +339,7 @@
         }
     }
 
+    // 抢手机
     var miphoneBuy = {
 
         // 系统时间
@@ -417,7 +420,7 @@
             }, 1000);
         },
 
-        // 本次抢购配置的开始时间
+        // 本次抢购配置的开始时间，预登录时间限制
         configs: {
             startDate: new Date('10/22/2013 12:00:00').getTime(),
             interDate: new Date('10/22/2013 12:02:00').getTime(),
@@ -437,11 +440,11 @@
         // 设置显示倒计时的 DOM 节点
         timeNode: function () {
             var e = this,
-                    t = servertime * 1000,
-                    n = e.configs.startDate,
-                    i = n - e.configs.preLogMin * 60000;
+                    t = servertime * 1000, // (e.stime + (8 - (new Date).getTimezoneOffset() / 60 * -1) * 3600) * 1000
+                    n = e.configs.startDate, // new Date('10/22/2013 12:00:00').getTime()
+                    i = n - e.configs.preLogMin * 60000; // new Date('10/22/2013 12:00:00').getTime() - 30*60000 == 1382412600000
 
-            // 卖完了
+            // 输了
             if (m.cookie('xm_xt_prex') == 4) {
                 e.saleOut();
                 return;
