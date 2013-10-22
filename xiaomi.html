@@ -11,7 +11,7 @@
 
 !function(){
     /**
-     * @desc 小米手机官网抢购页面 - 还原源代码并格式化，仅供学习研究，严禁他用，其实也干不了啥... form: http://p.www.xiaomi.com/open/index.html
+     * @desc 小米手机官网抢购页面 - 还原源代码并格式化，仅供学习研究，严禁他用，其实也干不了啥...，如有理解错误还望指正。From: http://p.www.xiaomi.com/open/index.html
      * @author jiguang
      * @site http://44ux.com
      * @mail jiguang1984#gmail.com
@@ -50,7 +50,7 @@
     myReplace(/5e4/ig, 50000);
     myReplace(/6e4/ig, 60000);
 
-    // 第五步：修正个别ＨＴＭＬ代码中的单引号错误【手动】，jsLint检查，格式化
+    // 第五步：修正个别ＨＴＭＬ代码中的单引号错误（手动），jsLint检查，格式化
 
     // 最后：得到解码后代码，混淆的没办法还原，不过不难看懂
     var isRollStatus = false,
@@ -116,7 +116,7 @@
                     if (window == window.top) {
                         i = setInterval(function () {
                             try {
-                                t || document.documentElement.doScroll('left')
+                                t || document.documentElement.doScroll('left');
                             } catch (e) {
                                 return;
                             }
@@ -126,10 +126,12 @@
                 }
             },
 
+            // 封装选择器
             $: function () {
                 return typeof arguments[0] === 'string' ? document.getElementById(arguments[0]) : arguments[0];
             },
 
+            // 继承
             extend: function (e, t) {
                 for (name in t) {
                     e[name] = t[name];
@@ -137,6 +139,7 @@
                 return e;
             },
 
+            // cookie 操作
             cookie: function (e, t, n) {
                 if (arguments.length > 1 && String(t) !== '[object Object]') {
                     if (t === null || t === undefined) {
@@ -161,6 +164,7 @@
                 return (o = new RegExp('(?:^|; )' + encodeURIComponent(e) + '=([^;]*)').exec(document.cookie)) ? r(o[1]) : null;
             },
 
+            // 事件绑定
             addEvent: function () {
                 if (document.addEventListener) {
                     return function (e, t, n) {
@@ -170,20 +174,24 @@
                     return function (e, t, n) {
                         e.attachEvent('on' + t, function () {
                             return n.call(e, window.event);
-                        })
+                        });
                     }
                 }
             }(),
 
+            // 随机对比继承属性
             randomDiff: function (e) {
                 var t = {
                             randomS: 1,
                             randomE: 5
-                        }, n = m.extend(t, e || {}),
+                        },
+                        n = m.extend(t, e || {}),
                         i = Math.random() * (n.randomE - n.randomS + 1) + n.randomS;
+
                 return parseInt(i);
             },
 
+            // 获取 url 中的查询字段
             getQueryString: function (e) {
                 var t = new RegExp('(^|&)' + e + '=([^&]*)(&|$)', 'i');
                 var n = window.location.search.substr(1).match(t);
@@ -191,6 +199,7 @@
                 return null;
             },
 
+            // 动态插入 JavaScript
             creatJs: function (e, t) {
                 var n = document.createElement('script');
                 n.src = e;
@@ -203,6 +212,7 @@
                 document.body.appendChild(n);
             },
 
+            // 跳转到移动端页面
             phone: function (e) {
                 e = e || 'http://m.xiaomi.com';
                 if (m.cookie('orgin') === 'mapp') {
@@ -217,14 +227,19 @@
                     location.href = e;
                 }
             },
+
+            // 初始化
             init: function () {
                 var e = this;
                 e.doms();
             }
         };
+
         m.init();
     })();
 
+    // JSON 回调函数，据说 "allow": false 是没有购买权限？
+    // 例子：hdcontrol({"stime":1382433176,"status":{"allow":false,"miphone":{"hdstart":false,"hdstop":true,"hdurl":"","duration":null, "pmstart":false},"mibox":{"hdstart":false,"hdstop":true,"hdurl":"","duration":null, "pmstart":false},"mitv":{"hdstart":false,"hdstop":true,"hdurl":"","duration":null, "pmstart":false}}})
     function hdcontrol(e) {
         var t = e.status,
                 n = t.miphone.hdurl,
@@ -235,15 +250,20 @@
                 l = t.mitv.hdstart === false && t.mitv.hdstop === true ? true : false,
                 s = e.stime + (8 - (new Date).getTimezoneOffset() / 60 * -1) * 3600;
 
+        // 服务器时间
         servertime = downServertime = s;
+
         var c = parseInt(servertime - miphoneBuy.localTime());
 
+        // 这个 cookie 值就是你电脑的时间距离服务器返回开始时间的毫秒间隔
         m.cookie('xm_difft_hd', c, {
             path: '/',
             domain: '.xiaomi.com',
             expires: 1
         });
 
+        // 看你有冇命去下单页面咯
+        // 例：d(t.miphone.hdurl)，如果服务器返回的这个字段为空，则直接刷新页面
         function d(e) {
             if (e == null || e == '') {
                 window.location.reload();
@@ -252,6 +272,7 @@
             }
         }
 
+        // 抢购之前忽悠你的状态
         function h(e) {
             m.cookie('xm_xt_prex', e, {
                 path: '/',
@@ -261,6 +282,8 @@
         }
 
         if (isRollStatus) {
+
+            // 如果返回的 allow 是 true ...
             if (t.allow) {
                 if (isPhone === true) {
                     isPhone = false;
@@ -276,6 +299,7 @@
             isRollStatus = false;
         }
 
+        // 分别判断几个商品的开始时间，例：r = t.mibox.hdstart === false && t.mibox.hdstop === true ? true : false
         if (l || o || r) {
             if (window.timeInter) {
                 clearInterval(timeInter);
@@ -314,6 +338,8 @@
     }
 
     var miphoneBuy = {
+
+        // 系统时间
         localTime: function () {
             var e = (8 - (new Date).getTimezoneOffset() / 60 * -1) * 3600,
                     t = (new Date).getTime() / 1000,
@@ -321,16 +347,22 @@
             return parseInt(n);
         },
 
+        // 请求状态
         jsonInter: function () {
             var e = (new Date).getTime();
-            m.creatJs('http://tc.hd.xiaomi.com/hdget?callback=hdcontrol&_=' + e, 'jsonp')
+            m.creatJs('http://tc.hd.xiaomi.com/hdget?callback=hdcontrol&_=' + e, 'jsonp');
         },
 
+        // 验证 cookie
         checkCookie: function () {
+
             var e = this;
             e.jugeIsEnd();
 
+            // 有这个 cookie 的话，数到4就卖完
             if (m.cookie('xm_xt_prex')) {
+
+                // 数到4秒就卖完了？
                 switch (m.cookie('xm_xt_prex')) {
                     case '4':
                         e.saleOut();
@@ -365,6 +397,7 @@
             }
         },
 
+        // 直接停止计时，变成售罄状态
         saleOut: function () {
             if (window.timeInter) {
                 clearInterval(timeInter);
@@ -373,21 +406,25 @@
             miphoneBuy.box(false);
         },
 
+        // 判断状态
         jugeStatus: function () {
             var e = this;
             e.timeNode();
+
             timeInter = window.setInterval(function () {
                 e.timeNode();
                 servertime++;
-            }, 1000)
+            }, 1000);
         },
 
+        // 本次抢购配置的开始时间
         configs: {
             startDate: new Date('10/22/2013 12:00:00').getTime(),
             interDate: new Date('10/22/2013 12:02:00').getTime(),
             preLogMin: 30
         },
 
+        // 50 秒自动判断一次是否结束
         jugeIsEnd: function () {
             var e = this;
             endInter = window.setInterval(function () {
@@ -397,21 +434,29 @@
             }, 50000);
         },
 
+        // 设置显示倒计时的 DOM 节点
         timeNode: function () {
             var e = this,
                     t = servertime * 1000,
                     n = e.configs.startDate,
                     i = n - e.configs.preLogMin * 60000;
+
+            // 卖完了
             if (m.cookie('xm_xt_prex') == 4) {
                 e.saleOut();
                 return;
             }
+
+            // 接着数数
             if (t >= e.configs.interDate) {
                 isInterval = true;
             }
+
             if (m.cookie('xm_difft_hd')) {
                 downServertime = miphoneBuy.localTime() + parseInt(m.cookie('xm_difft_hd'));
             }
+
+            // 关键的最后几秒钟
             if (t < i) {
                 stepHtml.one();
                 e.timeOut();
@@ -423,6 +468,7 @@
             }
         },
 
+        // 设置倒计时
         timeOut: function () {
             var e = this;
             e.SetRemainTime();
@@ -436,6 +482,7 @@
             }, 1000);
         },
 
+        // 设置倒计时
         SetRemainTime: function () {
             var e = this,
                     t = e.configs.startDate,
@@ -472,19 +519,25 @@
                 }
             }
         },
+
+        // 排队信息框：正在排队中... 重新进入(3)
         box: function (e) {
             if (e) {
                 var t = m.$('boxbg');
                 var n = m.$('box');
+
                 t.style.height = Math.max(document.documentElement.clientHeight, document.documentElement.scrollHeight) + 'px';
                 t.style.display = 'block';
-                n.style.display = 'block'
+                n.style.display = 'block';
             } else {
+                // 传 false 的直接进这里
                 var t = m.$('boxbg');
                 var n = m.$('box');
+
                 t.style.display = 'none';
                 n.style.display = 'none';
 
+                // 直接停掉计时器
                 if (window.rollInter) {
                     clearInterval(rollInter);
                 }
@@ -493,12 +546,14 @@
                 m.$('reback').innerHTML = '重新进入(<span id="initCount">' + count + '</span>)';
             }
         },
+
         init: function (e) {
             var t = this;
             t.checkCookie();
         }
     };
 
+    // URL 地址缓存
     var URLTable = {
         phone: 'http://t.hd.xiaomi.com/r/?_a=payment_check',
         tv: 'http://t.hd.xiaomi.com/r/?_a=payment_check_tv',
@@ -511,6 +566,7 @@
         login: 'http://p.www.xiaomi.com/zt/xm_account/limitfacade.html?third=http%3A%2F%2Forder.xiaomi.com%2Flogin%2Fcallback%3Ffollowup%3Dhttp%253A%252F%252Fp.www.xiaomi.com%252Fopen%252Findex.html%26sign%3DYWY4NjlhMmExNzkzNGE5YTBjYjAzNzVjZTc1MmE5OTYwYmVlODc4NA%2C%2C%26sid%3Deshop&sid=eshop&callback=http%3A%2F%2Forder.xiaomi.com%2Flogin%2Fcallback%3Ffollowup%3Dhttp%253A%252F%252Fp.www.xiaomi.com%252Fopen%252Findex.html%26sign%3DYWY4NjlhMmExNzkzNGE5YTBjYjAzNzVjZTc1MmE5OTYwYmVlODc4NA%2C%2C&sign=9ZAFXvlDKGxSJhEBqKdOtQp633c%3D'
     };
 
+    // 每一步的按钮、链接及提示消息设置
     var stepHtml = {
         one: function () {
             var e = stepHtml.htmlString();
@@ -564,10 +620,11 @@
             m.$('detail-mitv').innerHTML = e.detailTv[1];
         },
 
+        // 到这步就已经显示卖完了
         four: function () {
             var e = stepHtml.htmlString();
             m.$('hdBtns').innerHTML = e.btn[3];
-            m.$('hdSubTitle').innerHTML = e.subTitle[1];
+            m.$('hdSubTitle').innerHTML = e.subTitle[1]; //  '本次开放购买所有产品已售罄，下午3点进行剩余订单专场'
             m.$('hdLnks').innerHTML = e.lnks[3];
             m.$('hdMsg').innerHTML = e.msg[2];
             m.$('mi3btn').innerHTML = e.phonebtn[2];
@@ -673,6 +730,7 @@
 
             var e = {
 
+                // 一些按钮和链接，顾名思义
                 btn:[
                     '<span class="untime"><label id="surTime" class="unbtn"></label></span>',
                     '<a class="btn" href="'+URLTable.login+'" title="提前登录" >提前登录</a>',
@@ -742,14 +800,22 @@
         }
     };
 
+    // 【重进进入】按钮上的时间是10秒钟以内的随机数
     var randCount = parseInt(Math.random() * (10 - 5 + 1) + 5),
+
             count = randCount,
+
+            // 缓存一下取到的随机数备用
             CONFIG = {
                 count: randCount
-            }, Util = {
+            },
 
+            Util = {
+
+                // 排队框中的倒计时
                 time: function () {
                     var e = m.$('reback');
+                    // 随机的倒计时数到 0 才允许点一次
                     if (count === 0) {
                         e.innerHTML = '进入活动';
                         e.className = 'reback_btn_next';
@@ -760,34 +826,47 @@
                     e.innerHTML = '重新进入(<span id="initCount">' + count + '</span>)';
                 },
 
+                // 开始抢了
                 start: function () {
                     var e = this,
                             t = m.$('reback');
+
+                    // 点击【重新进入】按钮，此时文案已变成【进入活动】
                     t.onclick = function () {
                         isRollStatus = true;
+                        // 尝试请求一次状态
                         miphoneBuy.jsonInter();
+                        // 重新设置时间
                         e.retime();
+                        // 立即解除事件绑定
                         t.onclick = null;
-                        return false
+                        return false;
                     }
                 },
 
+                // 重新设置，重新进入的倒计时时间
                 retime: function () {
                     m.$('reback').className = 'reback_btn';
                     count = CONFIG.count;
                 }
             };
 
+    // 登录信息
     var loginInfo = {
+
         data: {
             userId: 0,
             userName: ''
         },
 
+        // 初始化
         init: function () {
+
+            // 一坨验证用户信息的代码
             this.data.userId = m.cookie('userId');
             if (!this.data.userId) return false;
             this.data.userName = this.data.userId ? m.cookie('XM_' + this.data.userId + '_UN') : '';
+
             if (this.data.userName == null || this.data.userName == '') {
                 var e = document.createElement('script');
                 e.src = 'https://account.xiaomi.com/pass/userInfoJsonP?userId=' + this.data.userId + '&callback=loginInfo.getAccountInfo';
@@ -799,6 +878,7 @@
             }
         },
 
+        // 更新用户信息
         upUserInfo: function () {
             var e = this.data.userName;
             if ( !! m.$('LoginArea')) {
@@ -807,6 +887,7 @@
             }
         },
 
+        // 获取账户信息
         getAccountInfo: function (e) {
             if (e.userId) {
                 this.data.userName = e.uniqName ? e.uniqName : e.userId;
@@ -815,12 +896,14 @@
                     domain: '.xiaomi.com'
                 };
                 m.cookie('XM_' + this.data.userId + '_UN', this.data.userName, t);
-                this.upUserInfo()
+                this.upUserInfo();
             }
         }
     };
 
+    // 显示排队信息框
     function showBox(e) {
+        // cookie 中 userId 不为空即可，否则跳到登录页面
         if (m.cookie('userId')) {
             if (e === 'phone') {
                 isPhone = true;
@@ -833,6 +916,7 @@
                 rollProduct = 'tv';
             }
 
+            // 显示抢购小米手机的提示框
             miphoneBuy.box(true);
             m.$("initCount").innerHTML = CONFIG.count;
             rollInter = window.setInterval('Util.time()', 1000);
@@ -842,12 +926,14 @@
         }
     }
 
+    // 初始化
     m.ready(function () {
         m.phone('http://p.www.xiaomi.com/m/zt/open/index.html');
         miphoneBuy.init();
         loginInfo.init();
     });
 
+    // 显示视频框
     function showVideo(e) {
         if (typeof document.body.style.maxHeight !== 'undefined') {
 
@@ -872,13 +958,14 @@
         }
     }
 
+    // 关闭操作
     function closeBox() {
         m.$('videoBox').style.display = 'none';
         m.$('videoBox').innerHTML = '';
         m.$('videoBoxMask').style.display = 'none'
     }
 
-    // Google统计代码
+    // Google统计代码，忽略
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-24946561-1']);
     _gaq.push(['_addOrganic', 'baidu', 'word']);
