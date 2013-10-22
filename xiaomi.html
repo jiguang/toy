@@ -23,8 +23,9 @@
     // 第一步：解码变量
     var stringArray = decodeURI(_$.join('|||')).split('|||');
 
-    // 覆写代码
+    // 自定义函数，处理缓存的代码
     function myReplace(arg1, arg2){
+        // code 是存放代码的 textarea
         document.getElementById('code').value = document.getElementById('code').value.replace(arg1, arg2);
     }
 
@@ -51,7 +52,7 @@
 
     // 第五步：修正个别ＨＴＭＬ代码中的单引号错误【手动】，jsLint检查，格式化
 
-    // 完成：得到解码后代码，混淆的没办法还原，不过不难看懂
+    // 最后：得到解码后代码，混淆的没办法还原，不过不难看懂
     var isRollStatus = false,
             isPhone = false,
             isBox = false,
@@ -71,60 +72,62 @@
 
                 e.ready = function (e) {
                     if (t) {
-                        e.call(document)
+                        e.call(document);
                     } else {
                         n.push(function () {
-                            return e.call(this)
-                        })
+                            return e.call(this);
+                        });
                     }
-                    return this
+                    return this;
                 };
 
                 var a = function () {
                     for (var e = 0; e < n.length; e++) {
-                        n[e].apply(document)
+                        n[e].apply(document);
                     }
-                    n = null
+                    n = null;
                 };
 
                 var o = function (e) {
                     if (t) {
-                        return
+                        return;
                     }
+
                     t = true;
                     a.call(window);
+
                     if (document.removeEventListener) {
-                        document.removeEventListener('DOMContentLoaded', o, false)
+                        document.removeEventListener('DOMContentLoaded', o, false);
                     } else if (document.attachEvent) {
                         document.detachEvent('onreadystatechange', o);
                         if (window == window.top) {
                             clearInterval(i);
-                            i = null
+                            i = null;
                         }
                     }
                 };
 
                 if (document.addEventListener) {
-                    document.addEventListener('DOMContentLoaded', o, false)
+                    document.addEventListener('DOMContentLoaded', o, false);
                 } else if (document.attachEvent) {
                     document.attachEvent('onreadystatechange', function () {
-                        if (/loaded|complete/.test(document.readyState)) o()
+                        if (/loaded|complete/.test(document.readyState)) o();
                     });
                     if (window == window.top) {
                         i = setInterval(function () {
                             try {
                                 t || document.documentElement.doScroll('left')
                             } catch (e) {
-                                return
+                                return;
                             }
-                            o()
-                        }, 5)
+                            o();
+                        }, 5);
                     }
                 }
             },
 
             $: function () {
-                return typeof arguments[0] === 'string' ? document.getElementById(arguments[0]) : arguments[0]
+                return typeof arguments[0] === 'string' ? document.getElementById(arguments[0]) : arguments[0];
             },
 
             extend: function (e, t) {
@@ -137,12 +140,12 @@
             cookie: function (e, t, n) {
                 if (arguments.length > 1 && String(t) !== '[object Object]') {
                     if (t === null || t === undefined) {
-                        n.expires = -1
+                        n.expires = -1;
                     }
                     if (typeof n.expires === 'number') {
                         var i = n.expires,
                                 a = n.expires = new Date;
-                        a.setDate(a.getDate() + i)
+                        a.setDate(a.getDate() + i);
                     }
                     t = String(t);
 
@@ -178,14 +181,14 @@
                             randomE: 5
                         }, n = m.extend(t, e || {}),
                         i = Math.random() * (n.randomE - n.randomS + 1) + n.randomS;
-                return parseInt(i)
+                return parseInt(i);
             },
 
             getQueryString: function (e) {
                 var t = new RegExp('(^|&)' + e + '=([^&]*)(&|$)', 'i');
                 var n = window.location.search.substr(1).match(t);
                 if (n != null) return unescape(n[2]);
-                return null
+                return null;
             },
 
             creatJs: function (e, t) {
@@ -194,10 +197,10 @@
                 if ( !! t) {
                     n.id = t;
                     if (m.$(t)) {
-                        document.body.removeChild(m.$(t))
+                        document.body.removeChild(m.$(t));
                     }
                 }
-                document.body.appendChild(n)
+                document.body.appendChild(n);
             },
 
             phone: function (e) {
@@ -211,7 +214,7 @@
                 }
                 var t = navigator.userAgent;
                 if (t.indexOf('Android') > -1 || t.indexOf('iPhone') > -1 || t.indexOf('iPod') > -1 || t.indexOf('Symbian') > -1) {
-                    location.href = e
+                    location.href = e;
                 }
             },
             init: function () {
